@@ -1,0 +1,77 @@
+K 25
+svn:wc:ra_dav:version-url
+V 89
+/repos/mobile_apps/!svn/ver/103/CameraMap/android/CameraMap/src/jp/astra/cameramap/helper
+END
+Logger.java
+K 25
+svn:wc:ra_dav:version-url
+V 100
+/repos/mobile_apps/!svn/ver/40/CameraMap/android/CameraMap/src/jp/astra/cameramap/helper/Logger.java
+END
+BaseActivity.java
+K 25
+svn:wc:ra_dav:version-url
+V 106
+/repos/mobile_apps/!svn/ver/85/CameraMap/android/CameraMap/src/jp/astra/cameramap/helper/BaseActivity.java
+END
+ImageLoader.java
+K 25
+svn:wc:ra_dav:version-url
+V 105
+/repos/mobile_apps/!svn/ver/71/CameraMap/android/CameraMap/src/jp/astra/cameramap/helper/ImageLoader.java
+END
+CustomGridView.java
+K 25
+svn:wc:ra_dav:version-url
+V 108
+/repos/mobile_apps/!svn/ver/80/CameraMap/android/CameraMap/src/jp/astra/cameramap/helper/CustomGridView.java
+END
+ArrayUtil.java
+K 25
+svn:wc:ra_dav:version-url
+V 103
+/repos/mobile_apps/!svn/ver/40/CameraMap/android/CameraMap/src/jp/astra/cameramap/helper/ArrayUtil.java
+END
+Notify.java
+K 25
+svn:wc:ra_dav:version-url
+V 100
+/repos/mobile_apps/!svn/ver/40/CameraMap/android/CameraMap/src/jp/astra/cameramap/helper/Notify.java
+END
+Preferences.java
+K 25
+svn:wc:ra_dav:version-url
+V 105
+/repos/mobile_apps/!svn/ver/40/CameraMap/android/CameraMap/src/jp/astra/cameramap/helper/Preferences.java
+END
+CameraMapException.java
+K 25
+svn:wc:ra_dav:version-url
+V 112
+/repos/mobile_apps/!svn/ver/40/CameraMap/android/CameraMap/src/jp/astra/cameramap/helper/CameraMapException.java
+END
+Dictionary.java
+K 25
+svn:wc:ra_dav:version-url
+V 104
+/repos/mobile_apps/!svn/ver/40/CameraMap/android/CameraMap/src/jp/astra/cameramap/helper/Dictionary.java
+END
+StringUtil.java
+K 25
+svn:wc:ra_dav:version-url
+V 104
+/repos/mobile_apps/!svn/ver/85/CameraMap/android/CameraMap/src/jp/astra/cameramap/helper/StringUtil.java
+END
+Util.java
+K 25
+svn:wc:ra_dav:version-url
+V 99
+/repos/mobile_apps/!svn/ver/103/CameraMap/android/CameraMap/src/jp/astra/cameramap/helper/Util.java
+END
+ActivityUtil.java
+K 25
+svn:wc:ra_dav:version-url
+V 106
+/repos/mobile_apps/!svn/ver/40/CameraMap/android/CameraMap/src/jp/astra/cameramap/helper/ActivityUtil.java
+END

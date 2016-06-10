@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name" translatable="false">CameraMap</string>
+    <string name="menu_settings" translatable="false">Settings</string>
+    
+    <string name="loading" formatted="false">Loading</string>
+    <string name="preparing" formatted="false">Preparing</string>
+    <string name="empty_list" formatted="false">No image found.</string>
+    
+    <string name="connection_timeout" formatted="false">5000</string>
+    <string name="delay" formatted="false">200</string>
+    
+    <string name="alert_button_apply" formatted="false">Apply</string>
+    <string name="alert_button_cancel" formatted="false">Cancel</string>
+    <string name="alert_button_clear" formatted="false">Clear</string>
+    <string name="alert_button_exit" formatted="false">Exit</string>
+    <string name="alert_button_ok" formatted="false">OK</string>
+    <string name="alert_button_save" formatted="false">Save</string>
+    
+    <string name="alert_close" formatted="false">Exit this application?</string>
+    <string name="alert_exit_preview" formatted="false">Close editor without saving?</string>
+    <string name="alert_fatal" formatted="false">Fatal Error.</string>
+
+</resources>

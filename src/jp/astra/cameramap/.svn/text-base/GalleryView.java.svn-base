@@ -1,0 +1,328 @@
+package jp.astra.cameramap;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.HashMap;
+
+import jp.astra.cameramap.helper.ActivityUtil;
+import jp.astra.cameramap.helper.ArrayUtil;
+import jp.astra.cameramap.helper.Dictionary;
+import jp.astra.cameramap.helper.Logger;
+import jp.astra.cameramap.helper.Notify;
+import jp.astra.cameramap.helper.StringUtil;
+import jp.astra.cameramap.helper.Util;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.media.MediaScannerConnection;
+import android.net.Uri;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
+import android.widget.AdapterView.OnItemLongClickListener;
+import android.widget.BaseAdapter;
+import android.widget.Button;
+import android.widget.GridView;
+import android.widget.ImageView;
+import android.widget.TextView;
+
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.GoogleMap.OnInfoWindowClickListener;
+import com.google.android.gms.maps.MapFragment;
+import com.google.android.gms.maps.model.CameraPosition;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
+import com.google.android.maps.GeoPoint;
+
+/**
+ * @author Lau
+ */
+public class GalleryView extends MapActivity implements OnInfoWindowClickListener{
+
+	private ImageAdapter imageAdapter;
+	private GridView gridview;
+	private String[] files;
+	private String fileSelected;
+
+	@Override
+    public void onCreate(Bundle savedInstanceState) {
+
+		super.onCreate(savedInstanceState);
+		this.setContentView(R.layout.gallery_view);
+
+		this.inflateControls(this);
+
+        Button buttonTakePicture = (Button)this.findViewById(R.id.takepicture);
+        buttonTakePicture.setOnClickListener(this.captureButtonListener);
+
+        Button buttonList = (Button)this.findViewById(R.id.gallerylist);
+        buttonList.setOnClickListener(this.galleryListButtonListener);
+
+        this.findViewById(R.id.photomap).setVisibility(View.INVISIBLE);
+
+        Button buttonScreenshots = (Button)this.findViewById(R.id.screenshots);
+        buttonScreenshots.setOnClickListener(this.reportButtonListener);
+
+        Button buttonPreview = (Button)this.findViewById(R.id.previewbtn);
+        buttonPreview.setVisibility(View.VISIBLE);
+        buttonPreview.setOnClickListener(new Button.OnClickListener(){
+
+			@Override
+			public void onClick(View arg0) {
+
+	  			Intent intent = new Intent(GalleryView.this, GalleryPreviewView.class);
+	  			intent.putExtra("latitude", ""+GalleryView.this.latitude);
+	  			intent.putExtra("longitude", ""+GalleryView.this.longitude);
+	  			intent.putExtra("zoomLevel", ""+GalleryView.this.zoomLevel);
+	  			intent.putExtra("width", ""+GalleryView.this.width);
+	  			intent.putExtra("height", ""+GalleryView.this.height);
+	  			intent.putExtra("markers", GalleryView.this.markerStr);
+	  			intent.putExtra("filePath", GalleryView.this.files);
+	  			intent.putExtra("imageFolder", GalleryView.this.imageFolder.getAbsolutePath());
+	  			intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+		        intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+		        GalleryView.this.startActivity(intent);
+		        Logger.debug(GalleryView.this, "extras latitude  :" + GalleryView.this.latitude);
+				Logger.debug(GalleryView.this, "extras longitude :" + GalleryView.this.longitude);
+				Logger.debug(GalleryView.this, "extras zoomLevel :" + GalleryView.this.zoomLevel);
+				Logger.debug(GalleryView.this, "extras markerStr :" + GalleryView.this.markerStr);
+				Logger.debug(GalleryView.this, "extras imageFolder :" + GalleryView.this.imageFolder.getAbsolutePath());
+
+			}});
+
+    	this.progress.show();
+    	if(Util.isReachable(this)){
+    		new GalleryBackgroundTask().execute();
+    	}else{
+    		Notify.toast(this, "No network connection");
+    	}
+
+    }
+
+	@Override
+    public void onResume() {
+    	super.onResume();
+    	Notify.toast(GalleryView.this, "scanning...");
+		MediaScannerConnection.scanFile(GalleryView.this, new String[] {GalleryView.this.imageFolder.getAbsolutePath()}, null, GalleryView.this.scanMediaListener);
+	}
+
+    @Override
+    public void setContentView(int layoutId) {
+        super.setContentView(layoutId);
+
+        Bundle extras = this.getIntent().getExtras();
+		this.files = extras.getStringArray("filePath");
+        this.imageFolder = new  File(Util.getExternalStoragePath(this));
+        this.imageAdapter = new ImageAdapter();
+
+        this.gridview = (GridView) this.findViewById(R.id.gallery_grid_view);
+        this.gridview.setAdapter(this.imageAdapter);
+        this.gridview.setOnItemClickListener(this.imageListener);
+        this.gridview.setOnItemLongClickListener(this.imageLongClickListener);
+
+        if (this.imageAdapter.isEmpty()) {
+        	TextView emptyListText = (TextView) this.findViewById(R.id.gallery_no_images_text);
+        	emptyListText.setVisibility(View.VISIBLE);
+        }
+        if(this.map == null){
+        	GalleryView.this.map = ((MapFragment) GalleryView.this.getFragmentManager().findFragmentById(R.id.map)).getMap();
+        }
+        this.map.setOnCameraChangeListener(new GoogleMap.OnCameraChangeListener() {
+            @Override
+            public void onCameraChange(CameraPosition cameraPosition) {
+                if (cameraPosition.zoom != GalleryView.this.oldZoom) {
+                    GalleryView.this.checkMarkers(GalleryView.this.map);
+                }
+                GalleryView.this.oldZoom = cameraPosition.zoom;
+
+                GalleryView.this.latitude = Util.roundDecimals(cameraPosition.target.latitude);
+            	GalleryView.this.longitude = Util.roundDecimals(cameraPosition.target.longitude);
+            	GalleryView.this.zoomLevel = (int) cameraPosition.zoom;
+            	Logger.debug(GalleryView.this, "new latitude    :" + GalleryView.this.latitude);
+            	Logger.debug(GalleryView.this, "new longitude   :" + GalleryView.this.longitude);
+            	Logger.debug(GalleryView.this, "new zoom level  :" + GalleryView.this.zoomLevel);
+//            	latLng = cameraPosition.target;
+            }
+        });
+
+        this.map.moveCamera(CameraUpdateFactory.newLatLngZoom(this.latLng, 5));
+        this.zoomLevel = 5;
+
+    }
+
+    private MediaScannerConnection.OnScanCompletedListener scanMediaListener = new MediaScannerConnection.OnScanCompletedListener() {
+
+		@Override
+		public void onScanCompleted(String path, Uri uri) {
+			GalleryView.this.refreshGalleryHandler.sendEmptyMessage(0);
+		}
+	};
+
+    private OnItemClickListener imageListener = new OnItemClickListener() {
+
+		@Override
+		public void onItemClick(AdapterView<?> adapter, View view, int position, long extra) {
+			Dictionary bundle = new Dictionary();
+	        bundle.setData("filepath", GalleryView.this.imageAdapter.getItem(position));
+	        ActivityUtil.openActivityOnTop(GalleryView.this, PreviewView.class, bundle);
+		}
+
+	};
+
+	private OnItemLongClickListener imageLongClickListener = new OnItemLongClickListener() {
+
+		@Override
+		public boolean onItemLongClick(AdapterView<?> adapter, View view,
+				int position, long extra) {
+			GalleryView.this.fileSelected = (String) GalleryView.this.imageAdapter.getItem(position);
+			Notify.prompt(GalleryView.this, "Delete " + StringUtil.fileBaseName(GalleryView.this.fileSelected) + "?", "Delete", "Cancel", GalleryView.this.deleteListener, null);
+			return false;
+		}
+
+	};
+
+	private final DialogInterface.OnClickListener deleteListener = new DialogInterface.OnClickListener() {
+
+		@Override
+		public void onClick(DialogInterface dialog, int which) {
+			File file = new File(GalleryView.this.fileSelected);
+			if(file.delete()){
+				GalleryView.this.progress.show();
+				GalleryView.this.files = ArrayUtil.removeString(GalleryView.this.files, GalleryView.this.fileSelected);
+		    	if(Util.isReachable(GalleryView.this)){
+		    		GalleryView.this.map.clear();
+		            GalleryView.this.markers = new ArrayList<Marker>();
+		            GalleryView.this.fileNames = new HashMap<Marker, String>();
+		    		new GalleryBackgroundTask().execute();
+		    	}else{
+		    		Notify.toast(GalleryView.this, "No network connection");
+		    	}
+		    	GalleryView.this.onResume();
+			}
+		}
+
+	};
+	public final Handler refreshGalleryHandler = new Handler() {
+
+        @Override
+        public void handleMessage(Message msg) {
+        	Notify.toast(GalleryView.this, "scanning complete!");
+
+        	GalleryView.this.imageAdapter.notifyDataSetChanged();
+	    	GalleryView.this.gridview.invalidateViews();
+	    	GalleryView.this.hideProgressHandler.sendEmptyMessage(0);
+
+        	super.handleMessage(msg);
+        }
+    };
+
+    private class GalleryBackgroundTask extends BackgroundTask{
+
+    	@Override
+    	protected Void doInBackground(Void... params) {
+        	for (String file : GalleryView.this.files) {
+        			LatLng location = GalleryView.this.setPhotoLocation(file);
+        			if(location != null){
+    	    			GeoPoint point = new GeoPoint(
+    	    		              (int) (location.latitude * 1E6),
+    	    		              (int) (location.longitude * 1E6));
+    	    			String locationName = StringUtil.ConvertPointToLocation(GalleryView.this, point);
+    	    			Details details = new Details();
+    	    			details.locationName = locationName;
+    	    			details.location = location;
+    	    			details.filePath = file;
+
+    	    			this.publishProgress(details);
+        			}
+        	}
+    		return null;
+    	}
+
+    }
+
+    private class ImageAdapter extends BaseAdapter {
+
+    	private String[] filePaths;
+
+    	public ImageAdapter() {
+			this.getImageFiles();
+		}
+
+    	@Override
+		public boolean isEmpty() {
+    		return this.getCount() < 1;
+    	}
+
+    	@Override
+		public int getCount() {
+            return this.filePaths.length;
+        }
+
+        @Override
+		public Object getItem(int position) {
+            return this.filePaths[position];
+        }
+
+        @Override
+		public long getItemId(int position) {
+            return 0;
+        }
+
+        @Override
+		public View getView(int position, View convertView, ViewGroup parent) {
+
+        	View v = convertView;
+        	if (v == null) {
+        		LayoutInflater inflater = GalleryView.this.getLayoutInflater();
+        		v = inflater.inflate(R.layout.gallery_row_view, null);
+    	   }
+
+            ImageView imageView = (ImageView)v.findViewById(R.id.imageGrid);
+            TextView textView = (TextView)v.findViewById(R.id.filename);
+
+            String imageFile = this.filePaths[position];
+            BitmapFactory.Options o2 = new BitmapFactory.Options();
+            o2.inSampleSize = 4;
+            Bitmap imageBitmap = BitmapFactory.decodeFile(imageFile, o2);
+            imageView.setImageBitmap(imageBitmap);
+            textView.setText(StringUtil.fileBaseName(imageFile));
+
+            return v;
+
+        }
+
+        public void getImageFiles() {
+
+        	int count = 0;
+        	this.filePaths = new String[0];
+
+        	for (String file : GalleryView.this.files) {
+        			this.filePaths = ArrayUtil.insertToStringArray(this.filePaths, file, count);
+        			count++;
+        	}
+        	if (count > 0) {
+        		GalleryView.this.findViewById(R.id.gallery_no_images_text).setVisibility(View.INVISIBLE);
+        	} else {
+        		GalleryView.this.findViewById(R.id.gallery_no_images_text).setVisibility(View.VISIBLE);
+        	}
+        }
+
+        @Override
+        public void notifyDataSetChanged() {
+        	this.getImageFiles();
+        	super.notifyDataSetChanged();
+        }
+    }
+
+    @Override
+    protected void mapUpdate() {
+    	super.mapUpdate();
+    }
+}

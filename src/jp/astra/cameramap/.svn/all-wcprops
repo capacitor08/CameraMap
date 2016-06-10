@@ -1,0 +1,89 @@
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/repos/mobile_apps/!svn/ver/103/CameraMap/android/CameraMap/src/jp/astra/cameramap
+END
+GPSTracker.java
+K 25
+svn:wc:ra_dav:version-url
+V 97
+/repos/mobile_apps/!svn/ver/40/CameraMap/android/CameraMap/src/jp/astra/cameramap/GPSTracker.java
+END
+PreviewView.java
+K 25
+svn:wc:ra_dav:version-url
+V 98
+/repos/mobile_apps/!svn/ver/85/CameraMap/android/CameraMap/src/jp/astra/cameramap/PreviewView.java
+END
+MapActivity.java
+K 25
+svn:wc:ra_dav:version-url
+V 98
+/repos/mobile_apps/!svn/ver/93/CameraMap/android/CameraMap/src/jp/astra/cameramap/MapActivity.java
+END
+GalleryPreviewView.java
+K 25
+svn:wc:ra_dav:version-url
+V 106
+/repos/mobile_apps/!svn/ver/101/CameraMap/android/CameraMap/src/jp/astra/cameramap/GalleryPreviewView.java
+END
+PhotoMapActivity.java
+K 25
+svn:wc:ra_dav:version-url
+V 103
+/repos/mobile_apps/!svn/ver/85/CameraMap/android/CameraMap/src/jp/astra/cameramap/PhotoMapActivity.java
+END
+MarkerInfo.java
+K 25
+svn:wc:ra_dav:version-url
+V 97
+/repos/mobile_apps/!svn/ver/56/CameraMap/android/CameraMap/src/jp/astra/cameramap/MarkerInfo.java
+END
+CameraMap.java
+K 25
+svn:wc:ra_dav:version-url
+V 96
+/repos/mobile_apps/!svn/ver/85/CameraMap/android/CameraMap/src/jp/astra/cameramap/CameraMap.java
+END
+GalleryView.java
+K 25
+svn:wc:ra_dav:version-url
+V 98
+/repos/mobile_apps/!svn/ver/93/CameraMap/android/CameraMap/src/jp/astra/cameramap/GalleryView.java
+END
+ScreenshotPreviewView.java
+K 25
+svn:wc:ra_dav:version-url
+V 109
+/repos/mobile_apps/!svn/ver/103/CameraMap/android/CameraMap/src/jp/astra/cameramap/ScreenshotPreviewView.java
+END
+GalleryListView.java
+K 25
+svn:wc:ra_dav:version-url
+V 102
+/repos/mobile_apps/!svn/ver/93/CameraMap/android/CameraMap/src/jp/astra/cameramap/GalleryListView.java
+END
+PreviewPreviewView.java
+K 25
+svn:wc:ra_dav:version-url
+V 106
+/repos/mobile_apps/!svn/ver/101/CameraMap/android/CameraMap/src/jp/astra/cameramap/PreviewPreviewView.java
+END
+CameraActivity.java
+K 25
+svn:wc:ra_dav:version-url
+V 101
+/repos/mobile_apps/!svn/ver/93/CameraMap/android/CameraMap/src/jp/astra/cameramap/CameraActivity.java
+END
+ScreenshotGalleryView.java
+K 25
+svn:wc:ra_dav:version-url
+V 109
+/repos/mobile_apps/!svn/ver/103/CameraMap/android/CameraMap/src/jp/astra/cameramap/ScreenshotGalleryView.java
+END
+MapPreviewView.java
+K 25
+svn:wc:ra_dav:version-url
+V 102
+/repos/mobile_apps/!svn/ver/101/CameraMap/android/CameraMap/src/jp/astra/cameramap/MapPreviewView.java
+END
